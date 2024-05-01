@@ -1,3 +1,9 @@
+# Modifications
+* Original repo: https://github.com/Tianxiaomo/pytorch-YOLOv4/tree/master
+* Roboflow version: https://github.com/roboflow/pytorch-YOLOv4
+* This version is a modified version of the Roboflow version. The modificationa re mainly done to work with pkg version that were installed on Ubuntu 22.0.
+* Install requirements `pip install -r requirements.txt`
+
 # Pytorch-YOLOv4
 
 ![](https://img.shields.io/static/v1?label=python&message=3.6|3.7&color=blue)

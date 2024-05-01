@@ -4,6 +4,18 @@
 * This version is a modified version of the Roboflow version. The modificationa re mainly done to work with pkg version that were installed on Ubuntu 22.0.
 * Install requirements `pip install -r requirements.txt`
 
+# Notes
+* Put all your training and validation images in the same directory
+* Place the annotations files e.g. `train.txt` and `val.txt` in the same directory.
+* Example training command:
+    ```sh
+    python train.py -b 4 -s 1 -l 0.001 -g 0 -pretrained ./checkpoints/Yolov4_epoch15.pth  -classes 2 -dir ./train  -train_label_path ./train/train.txt -val_label_path ./train/val.txt -height 416 -width 416 -epochs 50
+    ```
+* Example prediciton command:
+    ```sh
+    python predict.py 80 weights.pth example.jpg classes.txt --resolution 416 --use_cuda 1 --conf_thresh 0.6 --nms_thresh 0.4 --output_img output.jpg
+    ```
+    `80` is the number of classes. Adjust as needed.
 # Pytorch-YOLOv4
 
 ![](https://img.shields.io/static/v1?label=python&message=3.6|3.7&color=blue)

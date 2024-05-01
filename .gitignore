@@ -1,0 +1,15 @@
+ttest
+*.weights
+*.pth
+*.onnx
+
+__pycache__
+.idea
+.vscode
+runs
+log
+checkpoints
+
+predictions.jpg
+predictions_onnx.jpg
+train.txt

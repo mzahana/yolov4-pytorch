@@ -9,6 +9,9 @@ __pycache__
 runs
 log
 checkpoints
+train
+ttest
+valid
 
 predictions.jpg
 predictions_onnx.jpg

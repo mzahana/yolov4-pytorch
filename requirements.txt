@@ -6,4 +6,5 @@ tqdm
 easydict
 Pillow
 tensorboardX
+scikit-learn
 

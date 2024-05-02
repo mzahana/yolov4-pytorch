@@ -371,6 +371,58 @@ def plot_boxes(img, boxes, savename=None, class_names=None):
         img.save(savename)
     return img
 
+def plot_boxes_with_return(img, boxes, class_names=None, normalized=False):
+    draw = ImageDraw.Draw(img)
+    width, height = img.width, img.height
+    
+    for box in boxes:
+        if normalized:
+            # Normalize [x_center, y_center, width, height, conf, cls_id]
+            x1 = int((box[0] - box[2] / 2.0) * width)
+            y1 = int((box[1] - box[3] / 2.0) * height)
+            x2 = int((box[0] + box[2] / 2.0) * width)
+            y2 = int((box[1] + box[3] / 2.0) * height)
+        else:
+            # Non-normalized [x1, y1, x2, y2, conf, cls_id]
+            x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
+        
+        # Define box color and text based on the class
+        rgb = (255, 0, 0)  # Default red
+        if len(box) >= 7 and class_names:
+            cls_conf = box[5]
+            cls_id = box[6]
+            classes = len(class_names)
+            offset = cls_id * 123457 % classes
+            red = get_color(2, offset, classes)
+            green = get_color(1, offset, classes)
+            blue = get_color(0, offset, classes)
+            rgb = (red, green, blue)
+            label = f"{class_names[cls_id]}: {cls_conf:.2f}"
+            draw.text((x1, y1), label, fill=rgb)
+        elif len(box) == 5 and class_names:  # This is ground truth [x1, y1, x2, y2, class_id]
+            cls_conf = 1.0
+            cls_id = box[4]
+            classes = len(class_names)
+            offset = cls_id * 123457 % classes
+            red = get_color(2, offset, classes)
+            green = get_color(1, offset, classes)
+            blue = get_color(0, offset, classes)
+            rgb = (red, green, blue)
+            label = f"{class_names[cls_id]}: {cls_conf:.2f}"
+            draw.text((x1, y1), label, fill=rgb)
+        
+        draw.rectangle([x1, y1, x2, y2], outline=rgb)
+    
+    return img
+
+def get_color(c, x, max_val):
+    colors = torch.FloatTensor([[1, 0, 1], [0, 0, 1], [0, 1, 1], [0, 1, 0], [1, 1, 0], [1, 0, 0]])
+    ratio = float(x) / max_val * 5
+    i = int(math.floor(ratio))
+    j = int(math.ceil(ratio))
+    ratio = ratio - i
+    r = (1 - ratio) * colors[i][c] + ratio * colors[j][c]
+    return int(r * 255)
 
 def read_truths(lab_path):
     if not os.path.exists(lab_path):
@@ -409,7 +461,8 @@ def do_detect(model, img, conf_thresh, n_classes, nms_thresh, use_cuda=1):
     elif type(img) == np.ndarray and len(img.shape) == 4:
         img = torch.from_numpy(img.transpose(0, 3, 1, 2)).float().div(255.0)
     else:
-        print("unknow image type")
+        #print("unknow image type")
+        raise ValueError("Unsupported image type: {}".format(type(img)))
         exit(-1)
 
     t1 = time.time()
